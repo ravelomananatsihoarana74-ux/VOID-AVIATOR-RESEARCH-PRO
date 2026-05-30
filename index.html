@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VØID AVIATOR RESEARCH</title>
+    <style>
+        :root { --bg: #0a0a0a; --accent: #ff0000; --text: #eee; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; }
+        .header { text-align: center; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .card { background: #151515; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .prediction { font-size: 2rem; color: var(--accent); font-weight: bold; text-align: center; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white; border-radius: 4px; }
+        button { background: var(--accent); font-weight: bold; border: none; cursor: pointer; }
+        .history { margin-top: 20px; font-family: monospace; height: 150px; overflow-y: scroll; background: #000; padding: 10px; }
+        .upload-area { border: 2px dashed #444; padding: 20px; text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VØID-AVIATOR PRO</h1>
+        <p>Research & Strategy Lab</p>
+    </div>
+
+    <div class="card">
+        <h3>Prédiction Actuelle</h3>
+        <div class="prediction" id="pred-val">---</div>
+        <p id="trend-desc" style="text-align: center; font-size: 0.8rem; color: #888;">Analyse des données en cours...</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <label>Dernier Multiplicateur</label>
+            <input type="number" id="last-mult" step="0.01" placeholder="ex: 1.54">
+            <button onclick="addResult()">AJOUTER</button>
+        </div>
+        <div class="card">
+            <label>Stratégie</label>
+            <select id="strat-type">
+                <option value="martingale">Martingale Pro</option>
+                <option value="fibonacci">Fibonacci Scalping</option>
+                <option value="dalembert">D'Alembert Safe</option>
+                <option value="trend">Trend Follower</option>
+            </select>
+            <button onclick="calculateNext()">CALCULER</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Analyse d'Image (OCR)</h3>
+        <div class="upload-area" onclick="document.getElementById('img-input').click()">
+            <p>Glissez ou Cliquez pour uploader les multiplicateurs</p>
+            <input type="file" id="img-input" style="display:none" accept="image/*" onchange="processImage()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Historique de Session</h3>
+        <div class="history" id="log-area">
+            [SYS] Initialisation du moteur de prédiction...
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+        
+        function addResult() {
+            const val = parseFloat(document.getElementById('last-mult').value);
+            if (val) {
+                history.push(val);
+                log(`Entrée : ${val}x`);
+                document.getElementById('last-mult').value = '';
+                updatePrediction();
+            }
+        }
+
+        function log(msg) {
+            const area = document.getElementById('log-area');
+            area.innerHTML += `<div>> ${msg}</div>`;
+            area.scrollTop = area.scrollHeight;
+        }
+
+        function updatePrediction() {
+            if (history.length === 0) return;
+            
+            // Logique de prédiction simplifiée (Pattern Analysis)
+            let avg = history.slice(-5).reduce((a, b) => a + b, 0) / Math.min(history.length, 5);
+            let next = (avg * 0.85).toFixed(2); // Application d'un facteur de prudence
+            
+            document.getElementById('pred-val').innerText = `${next}x`;
+            
+            if (avg < 2.0) {
+                document.getElementById('trend-desc').innerText = "Séquence basse détectée. Risque de pic imminent.";
+            } else {
+                document.getElementById('trend-desc').innerText = "Séquence haute. Risque de crash immédiat (Instant Loss).";
+            }
+        }
+
+        function processImage() {
+            log("Analyse de l'image (Simulation OCR)...");
+            setTimeout(() => {
+                const mockResults = [1.2, 3.5, 1.05, 12.4, 2.1];
+                mockResults.forEach(r => history.push(r));
+                log(`OCR : ${mockResults.length} résultats extraits.`);
+                updatePrediction();
+            }, 1500);
+        }
+
+        function calculateNext() {
+            const strat = document.getElementById('strat-type').value;
+            log(`Calcul via stratégie : ${strat.toUpperCase()}`);
+            // ... logique étendue ...
+        }
+    </script>
+</body>
+</html>
